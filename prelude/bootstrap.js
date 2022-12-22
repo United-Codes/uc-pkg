@@ -62,6 +62,22 @@ const ARGV0 = process.argv[0];
 const EXECPATH = process.execPath;
 let ENTRYPOINT = process.argv[1];
 
+// Meaning this was forked
+if (process.send) {
+  // Here we remove all the v8 options. If there are none the location
+  // should be the third argument.
+  // We start from one because we expect dummy entry point on it
+  let numberOfElementsToRemove = 0;
+  for (let index = 2; index < process.argv.length; index += 1) {
+    if (process.argv[index].substr(process.argv[index].length - 3) !== '.js') {
+      numberOfElementsToRemove += 1;
+    } else {
+      break;
+    }
+  }
+  process.argv.splice(2, numberOfElementsToRemove);
+}
+
 if (process.env.PKG_EXECPATH === 'PKG_INVOKE_NODEJS') {
   return { undoPatch: true };
 }
